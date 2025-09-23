@@ -3,7 +3,10 @@
 void run_game(uint64_t target_fps){
     draw_ctx *ctx = prepare_graphics();
     get_render_ctx(ctx);
-    setup();
+    if (!setup()){
+        printl("Game setup failed");
+        return;
+    }
     uint64_t time = get_time();
     uint64_t delta_time;
     uint64_t target_dt = target_fps == 0 ? 0 : (1.f/target_fps)*1000;

@@ -25,7 +25,7 @@ $(EXEC_NAME): $(OBJ)
 	$(AR) rcs $@ $(OBJ)
 
 all: $(EXEC_NAME)
-
+	
 run: all
 	cp $(EXEC_NAME) $(FS_EXEC_PATH)
 	(cd $(OS_PATH); ./createfs; ./run_virt)
