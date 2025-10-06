@@ -4,10 +4,6 @@
 
 #include "platform.h" 
 
-typedef struct vector2 {
-    float x,y;
-} vector2;
-
 typedef struct primitive_rect {
     vector2 point;
     vector2 size;
