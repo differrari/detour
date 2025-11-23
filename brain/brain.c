@@ -29,3 +29,32 @@ void clear_activities(entity eid){
     activity_queue *q = &activity_queue_list[eid];
     q->activity_ptr = 0;
 }
+
+void handle_ai(entity eid, human_brain_t *ai, float dt){
+    if (ai->current_activity.state == brain_none){
+        // printf("Dequeueing activity %i",ai->current_activity.state);
+        ai->current_activity = dequeue_activity(eid);
+        if (ai->current_activity.state == brain_none) ai->current_activity.state = brain_choose_goal;
+    }
+    if (ai->current_activity.state != brain_choose_goal) return;
+    clear_activities(eid);
+    int need_count = 0;
+    generic_need **needs = get_need_array(eid, &need_count);
+    float max_priority = 0;
+    generic_need *max_need = 0;
+    for (int i = 0; i < 4; i++){
+        if (needs[i]->active && needs[i]->cooldown > 0){
+            needs[i]->cooldown -= dt;
+            continue;
+        }
+        if (needs[i]->active && needs[i]->priority > max_priority){
+            max_need = needs[i];
+            max_priority = needs[i]->priority;
+        }
+        if (needs[i]->triggered == trigger_add) needs[i]->triggered = trigger_remove;
+    }
+    if (max_need){
+        max_need->cooldown = 5.f;
+        max_need->triggered = trigger_add;
+    }
+}

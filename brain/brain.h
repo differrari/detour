@@ -149,6 +149,11 @@ make_render_system(lookat_debug, look_at, transform, render_lookat_debug)
 void path_follow(entity eid, human_brain_t *ai, movement *m, float dt);
 make_logic_system(path_following, human_brain_t, movement, path_follow)
 
+generic_need** get_need_array(int eid, int *amount);
+
+void handle_ai(entity eid, human_brain_t *ai, float dt);
+make_logic_system_1d(brain_system, human_brain_t, handle_ai)
+
 typedef enum { pf_not_determined, pf_in_progress, pf_incomplete, pf_invalid, pf_finished } pathfind_status;
 
 COMPONENT(path_follower, {

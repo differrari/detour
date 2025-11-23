@@ -1,7 +1,7 @@
 #pragma once
 
 #include "ecs.h"
-#include "image/image.h"//TODO: when moving to the engine, make it platform-agnostic
+#include "image/image.h"//TODO: make it platform-agnostic
 #include "math/math.h"
 #include "math/aabb2.h"
 
