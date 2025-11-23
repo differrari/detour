@@ -10,7 +10,7 @@ EXEC_NAME ?= detour.a
 
 STDINC ?= $(OS_PATH)/shared/
 STDLIB ?= $(OS_PATH)/shared/libshared.a
-CFLAGS ?= -ffreestanding -nostdlib -std=c99 -I$(STDINC) -O0
+CFLAGS ?= -ffreestanding -nostdlib -std=c99 -I$(STDINC) -I. -O0
 C_SOURCE ?= $(shell find . -name '*.c')
 OBJ ?= $(C_SOURCE:%.c=%.o)
 
