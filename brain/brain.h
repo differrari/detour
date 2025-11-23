@@ -9,16 +9,16 @@ typedef enum need_type { bar, inverted_bar } need_type;
 
 typedef enum trigger_type { trigger_none, trigger_remove, trigger_add, } trigger_type;
 
-typedef enum ai_states { ai_none, ai_choose_goal, ai_find_so, ai_use_so, ai_move, ai_delay } ai_states;
+typedef enum brain_states { brain_none, brain_choose_goal, brain_find_so, brain_use_so, brain_move, brain_delay } brain_states;
 
 typedef struct activity {
-    ai_states state;
+    brain_states state;
     uint64_t value;
     vector2 vector_value;
     float float_value;
 } activity;
 
-COMPONENT(human_ai_t, {
+COMPONENT(human_brain_t, {
     bool active;
     activity current_activity;
 })
@@ -87,9 +87,9 @@ static void trigger_##comp(entity eid, comp##_need *c, float dt){\
     if (c->triggered == trigger_add){\
         if (!get_tag(eid, trigger_tag)){\
             set_tag(eid, trigger_tag, true);\
-            human_ai_t_list[eid].current_activity.state = ai_none;\
+            human_brain_t_list[eid].current_activity.state = brain_none;\
             enqueue_activity(eid, (activity){\
-                .state = ai_find_so\
+                .state = brain_find_so\
             });\
         }\
     } else if (c->triggered == trigger_remove){\
@@ -102,40 +102,40 @@ static void trigger_##comp(entity eid, comp##_need *c, float dt){\
 make_logic_system_1d(comp##_trigger_system, comp##_need, trigger_##comp)
 
 #define find_so(tag, search_tag, need)\
-static void seek_##tag(entity eid, tag *d, human_ai_t *ai, float dt){\
-    if (ai->current_activity.state != ai_find_so) return;\
+static void seek_##tag(entity eid, tag *d, human_brain_t *ai, float dt){\
+    if (ai->current_activity.state != brain_find_so) return;\
     find_unique(eid, search_tag##_list, {\
         enqueue_activity(eid, ((activity){\
-            .state = ai_use_so,\
+            .state = brain_use_so,\
             .value = uid\
         }));\
         enqueue_activity(eid, ((activity){\
-            .state = ai_move,\
+            .state = brain_move,\
             .vector_value = {transform_list[uid].location.x, transform_list[uid].location.y + transform_list[uid].size.y}\
         }));\
         need##_need_list[eid].triggered = trigger_remove;\
-        human_ai_t_list[eid].current_activity.state = ai_none;\
+        human_brain_t_list[eid].current_activity.state = brain_none;\
     }, {\
         need##_need_list[eid].triggered = trigger_remove;\
-        human_ai_t_list[eid].current_activity.state = ai_none;\
+        human_brain_t_list[eid].current_activity.state = brain_none;\
     });\
 }\
-make_logic_system(seek_##need, tag, human_ai_t, seek_##tag)
+make_logic_system(seek_##need, tag, human_brain_t, seek_##tag)
 
 //TODO: set an activation tag, to only enable the action we want
 #define simple_action_system(need, seek)\
-static void seek##_simple_action(entity eid, human_ai_t *ai, need##_need *n, float dt){\
-    if (ai->current_activity.state != ai_use_so) return;\
+static void seek##_simple_action(entity eid, human_brain_t *ai, need##_need *n, float dt){\
+    if (ai->current_activity.state != brain_use_so) return;\
     entity so = (entity)ai->current_activity.value;\
     seek *action = &seek##_list[so];\
     if (!action->active) return;\
     ai->current_activity.float_value += dt;\
     n->input += dt;\
     if (ai->current_activity.float_value >= action->duration){\
-        ai->current_activity.state = ai_none;\
+        ai->current_activity.state = brain_none;\
     }\
 }\
-make_logic_system(need##_basic_use, human_ai_t, need##_need, seek##_simple_action)
+make_logic_system(need##_basic_use, human_brain_t, need##_need, seek##_simple_action)
 
 COMPONENT(look_at, {
     bool active;
@@ -146,8 +146,8 @@ COMPONENT(look_at, {
 void render_lookat_debug(entity eid, look_at *l, transform *t, draw_ctx*ctx, float dt);
 make_render_system(lookat_debug, look_at, transform, render_lookat_debug)
 
-void path_follow(entity eid, human_ai_t *ai, movement *m, float dt);
-make_logic_system(path_following, human_ai_t, movement, path_follow)
+void path_follow(entity eid, human_brain_t *ai, movement *m, float dt);
+make_logic_system(path_following, human_brain_t, movement, path_follow)
 
 typedef enum { pf_not_determined, pf_in_progress, pf_incomplete, pf_invalid, pf_finished } pathfind_status;
 

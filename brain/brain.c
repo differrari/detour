@@ -1,4 +1,4 @@
-#include "ai.h" 
+#include "brain.h" 
 
 void render_lookat_debug(entity eid, look_at *l, transform *t, draw_ctx*ctx, float dt){
     draw_debug_line(vector2_add(t->location, l->eye), vector2_add(t->location, l->target), 0xFFFF0000);
