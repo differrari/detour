@@ -134,7 +134,7 @@ void recalculate_collision(entity eid, sprite *s, transform *t){
 
 void resize_sprites(entity eid, sprite *s, transform *t, float dt){
     if (!zoom_changed && s->scaled_img) return;
-    if (s->scaled_img) free(s->scaled_img, s->scaled_img_size);
+    if (s->scaled_img) free_sized(s->scaled_img, s->scaled_img_size);
     s->scaled_img_size = t->size.x * camera_mult * t->size.y * camera_mult * sizeof(uint32_t);
     s->scaled_info.width = t->size.x * camera_mult;
     s->scaled_info.height = t->size.y * camera_mult;
