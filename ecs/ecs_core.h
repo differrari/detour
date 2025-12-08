@@ -4,6 +4,7 @@
 #include "image/image.h"//TODO: make it platform-agnostic
 #include "math/math.h"
 #include "math/aabb2.h"
+#include "mouse_input.h"
 
 COMPONENT(transform, {
     bool active;
@@ -27,6 +28,8 @@ COMPONENT(solid, {
     bool active;
     argbcolor color;
 });
+
+typedef enum { layer_bg, layer_objs, layer_npcs, layer_blocking, layer_player } game_layers;
 
 COMPONENT(renderable, {
     bool active;
@@ -90,6 +93,11 @@ make_logic_system(resize_sprite_system, sprite, transform, resize_sprites);
 
 void draw_debug_line(vector2 start, vector2 end, color color);
 void draw_debug_bar(entity eid, vector2 start, vector2 size, float fill, color color);
+
+void possessed_kbd_handler(entity uid, kbd_event event, float dt);
+void possessed_mouse_handler(entity uid, mouse_input event, float dt);
+
+void map_zoom(mouse_input mouse, float dt);
 
 static inline bool collide(transform *a, transform *b){
     vector2 sizea = a->collision_size.x && a->collision_size.y ? a->collision_size : a->size;

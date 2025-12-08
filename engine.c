@@ -10,7 +10,7 @@ void run_game(uint64_t target_fps){
     uint64_t time = get_time();
     uint64_t delta_time;
     uint64_t target_dt = target_fps == 0 ? 0 : (1.f/target_fps)*1000;
-    while (true){
+    while (!should_close_ctx()){
         float dt = delta_time/1000.f;
         update(dt);
 

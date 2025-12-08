@@ -16,7 +16,7 @@ bool setup(){
 }
 
 void update(float dt){
-    manual_logic(dt);
+    input_system(dt);
     manual_render(ctx);
     run_logic_systems;
     run_render_systems;

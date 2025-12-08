@@ -2,11 +2,11 @@
 
 #include "engine.h"
 
-typedef uint8_t entity; 
+typedef uint64_t entity; 
 typedef void (*logic_sys_function)(float dt);
 typedef void (*render_sys_function)(draw_ctx *ctx, float dt);
 
-#define MAX_ENTITIES 256
+#define MAX_ENTITIES 1024
 #define MAX_SYSTEMS 256
 
 #define COMPONENT(name, values) \
@@ -143,7 +143,7 @@ bool create_entities();
 
 void debug_entity(entity eid);
 
-void manual_logic(float dt);
+void input_system(float dt);
 void manual_render(draw_ctx *ctx);
 
 entity create_entity();

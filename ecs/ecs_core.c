@@ -1,10 +1,13 @@
 #include "ecs_core.h"
 #include "math/aabb2.h"
 #include "math/vector.h"
+#include "mouse_input.h"
+#include "input_keycodes.h"
 
 float camera_size;
 vector2 camera_pos;
 extern float camera_scale;
+extern bool zoom_changed;
 
 extern vector2 room_size;
 
@@ -38,6 +41,27 @@ if (locy+h >= ctx->height){\
     h -= (locy+h) - ctx->height;\
     h = max(h,0);\
 }\
+
+void map_zoom(mouse_input mouse, float dt){
+    if (mouse.scroll != 0){
+        float newScale = (float)mouse.scroll * dt;
+        camera_scale = clampf(camera_scale + newScale, 0.5f, 2);
+        zoom_changed = true;
+    } else zoom_changed = false;
+}
+
+void input_system(float dt){
+    find_unique(0,possessed_list, {
+        kbd_event event = {};
+        while (read_event(&event)){
+            if (event.key == KEY_ESC) halt(0);
+            possessed_kbd_handler(uid, event, dt);
+        }
+        mouse_input mouse;
+        get_mouse_status(&mouse);
+        possessed_mouse_handler(uid, mouse, dt);
+    }, {});
+}
 
 void render_solid(entity eid, transform *t, solid *s, draw_ctx *ctx, float dt){
     render_adjust(t->size.x * camera_mult, t->size.y * camera_mult)
