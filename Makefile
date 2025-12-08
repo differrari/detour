@@ -1,4 +1,4 @@
-ARCH       ?=
+ARCH       ?= aarch64-none-elf-
 CC         := $(ARCH)gcc
 CXX        := $(ARCH)g++
 LD         := $(ARCH)ld
