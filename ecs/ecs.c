@@ -17,9 +17,10 @@ bool setup(){
 
 void update(float dt){
     input_system(dt);
-    manual_render(ctx);
+    pre_render(ctx);
     run_logic_systems;
     run_render_systems;
+    post_render(ctx);
 }
 
 entity eid = 1;

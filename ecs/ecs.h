@@ -101,6 +101,12 @@ extern entity debug_focused_entity;
     }\
 } while(0)
 
+#define find_all(condition, action) do {\
+    for (int uid = 1; uid < MAX_ENTITIES; uid++){\
+        if (condition) action;\
+    }\
+} while(0)
+
 #define create_component(eid, type, initializer) do {\
     type *component = &type##_list[eid];\
     component->active = true;\
@@ -144,6 +150,7 @@ bool create_entities();
 void debug_entity(entity eid);
 
 void input_system(float dt);
-void manual_render(draw_ctx *ctx);
+void pre_render(draw_ctx *ctx);
+void post_render(draw_ctx *ctx);
 
 entity create_entity();
