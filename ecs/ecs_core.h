@@ -4,6 +4,7 @@
 #include "image/image.h"//TODO: make it platform-agnostic
 #include "math/math.h"
 #include "math/aabb2.h"
+#include "math/vector.h"
 #include "mouse_input.h"
 
 COMPONENT(transform, {
@@ -95,9 +96,20 @@ void draw_debug_line(vector2 start, vector2 end, color color);
 void draw_debug_bar(entity eid, vector2 start, vector2 size, float fill, color color);
 
 void possessed_kbd_handler(entity uid, kbd_event event, float dt);
-void possessed_mouse_handler(entity uid, mouse_input event, float dt);
+void possessed_mouse_handler(entity uid, mouse_input event, gpu_point p, float dt);
 
 void map_zoom(mouse_input mouse, float dt);
+vector2 screentoworld(gpu_point p);
+gpu_point worldtoscreen(vector2 p);
+
+static inline bool point_inside(vector2 p, transform *a){
+    vector2 loc = vector2_add(a->location,a->collision_offset);
+    return 
+        loc.x < p.x && 
+        loc.x + a->collision_size.x > p.x &&
+        loc.y < p.y && 
+        loc.y + a->collision_size.y > p.y;
+}
 
 static inline bool collide(transform *a, transform *b){
     vector2 sizea = a->collision_size.x && a->collision_size.y ? a->collision_size : a->size;

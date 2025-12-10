@@ -113,6 +113,15 @@ extern entity debug_focused_entity;
     initializer;\
 } while(0)
 
+#define point_collision(point, type, action) do {\
+    for (int cid = 1; cid < MAX_ENTITIES; cid++){\
+        if (type##_list[cid].active && transform_list[cid].active && point_inside(point, &transform_list[cid])){\
+            action;\
+            break;\
+        }\
+    }\
+} while(0);
+
 #define check_collision(source, type, action) do {\
     if (!transform_list[source].active) break;\
     for (int cid = 1; cid < MAX_ENTITIES; cid++){\

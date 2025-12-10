@@ -3,6 +3,8 @@
 #include "math/vector.h"
 #include "mouse_input.h"
 #include "input_keycodes.h"
+#include "syscalls/syscalls.h"
+#include "ui/graphic_types.h"
 
 float camera_size;
 vector2 camera_pos;
@@ -21,6 +23,14 @@ COMP_IMPL(possessed)
 COMP_IMPL(camera_follow)
 
 #define camera_mult (camera_size * camera_scale)
+
+vector2 screentoworld(gpu_point p){
+    return (vector2){((float)p.x-camera_pos.x)/camera_mult,((float)p.y-camera_pos.y)/camera_mult};
+}
+
+gpu_point worldtoscreen(vector2 p){
+    return (gpu_point){(p.x*camera_mult)+camera_pos.x,(p.y*camera_mult)+camera_pos.y};
+}
 
 #define render_adjust(obj_width,obj_height)\
 float lx = t->location.x - camera_pos.x;\
@@ -59,7 +69,9 @@ void input_system(float dt){
         }
         mouse_input mouse;
         get_mouse_status(&mouse);
-        possessed_mouse_handler(uid, mouse, dt);
+        gpu_point p;
+        get_mouse_position(&p);
+        possessed_mouse_handler(uid, mouse, p, dt);
     }, {});
 }
 
