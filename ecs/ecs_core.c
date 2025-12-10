@@ -25,11 +25,11 @@ COMP_IMPL(camera_follow)
 #define camera_mult (camera_size * camera_scale)
 
 vector2 screentoworld(gpu_point p){
-    return (vector2){((float)p.x-camera_pos.x)/camera_mult,((float)p.y-camera_pos.y)/camera_mult};
+    return (vector2){((float)p.x/camera_mult)+camera_pos.x,((float)p.y/camera_mult)+camera_pos.y};
 }
 
 gpu_point worldtoscreen(vector2 p){
-    return (gpu_point){(p.x*camera_mult)+camera_pos.x,(p.y*camera_mult)+camera_pos.y};
+    return (gpu_point){(p.x-camera_pos.x)*camera_mult,(p.y-camera_pos.y)*camera_mult};
 }
 
 #define render_adjust(obj_width,obj_height)\
