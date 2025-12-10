@@ -67,11 +67,9 @@ void input_system(float dt){
             if (event.key == KEY_ESC) halt(0);
             possessed_kbd_handler(uid, event, dt);
         }
-        mouse_input mouse;
+        mouse_data mouse;
         get_mouse_status(&mouse);
-        gpu_point p;
-        get_mouse_position(&p);
-        possessed_mouse_handler(uid, mouse, p, dt);
+        possessed_mouse_handler(uid, mouse, dt);
     }, {});
 }
 
