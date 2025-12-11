@@ -2,6 +2,7 @@
 
 #include "mouse_input.h"
 #include "keyboard_input.h"
+#include "mouse_input.h"
 
 typedef enum { route_world, route_game_ui, route_minigame, route_pause_menu } route_env;
 

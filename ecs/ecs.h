@@ -159,7 +159,7 @@ bool create_entities();
 void debug_entity(entity eid);
 
 void input_system(float dt);
-void pre_render(draw_ctx *ctx);
-void post_render(draw_ctx *ctx);
+void pre_render(draw_ctx *ctx, float dt);
+void post_render(draw_ctx *ctx, float dt);
 
 entity create_entity();
