@@ -76,11 +76,11 @@ void render_sprite(entity eid, transform *t, sprite *s, draw_ctx *ctx, float dt)
 void render_system(draw_ctx *ctx, float dt){
     for (int l = 0; l < 255; l++){
         for (int i = 1; i < MAX_ENTITIES; i++){
-            transform *t = &transform_list[i];
-            renderable *r = &renderable_list[i];
+            transform *t = &GET_COMPONENT(transform,i);
+            renderable *r = &GET_COMPONENT(renderable,i);
             if (t->active && r->active && r->layer == l){
-                if (solid_list[i].active) render_solid(i, t, &solid_list[i], ctx, dt);
-                if (sprite_list[i].active) render_sprite(i, t, &sprite_list[i], ctx, dt);
+                if (GET_COMPONENT(solid,i).active) render_solid(i, t, &GET_COMPONENT(solid,i), ctx, dt);
+                if (GET_COMPONENT(sprite,i).active) render_sprite(i, t, &GET_COMPONENT(sprite,i), ctx, dt);
             }
         }
     }
@@ -109,14 +109,14 @@ void draw_debug_bar(entity eid, vector2 start, vector2 size, float fill, color c
 
 bool find_movement_collision(entity eid, vector2 direction, float *f, entity *coll){
     if (!has_component(eid, collider)) return false;
-    transform *t = &transform_list[eid];
+    transform *t = &GET_COMPONENT(transform,eid);
     vector2 sizea = t->collision_size.x && t->collision_size.y ? t->collision_size : t->size;
     vector2 loca = vector2_add(t->location,t->collision_offset);
     aabb2 a = (aabb2){vector2_add(direction,loca), vector2_add(direction,vector2_add(loca, sizea))};
-    uint64_t mask = collider_list[eid].mask;
+    uint64_t mask = GET_COMPONENT(collider,eid).mask;
     for (int i = 0; i < MAX_ENTITIES; i++){
-        if (i != eid && collider_list[i].active && (mask & (1 << collider_list[i].layer))){
-            transform *t2 = &transform_list[i];
+        if (i != eid && GET_COMPONENT(collider,i).active && (mask & (1 << GET_COMPONENT(collider,i).layer))){
+            transform *t2 = &GET_COMPONENT(transform,i);
             vector2 locb = vector2_add(t2->location,t2->collision_offset);
             vector2 sizeb = t2->collision_size.x && t2->collision_size.y ? t2->collision_size : t2->size;
             aabb2 b = (aabb2){locb, vector2_add(locb, sizeb)};
@@ -169,17 +169,17 @@ void resize_sprites(entity eid, sprite *s, transform *t, float dt){
 
 bool find_collision(entity eid, entity *coll){
     if (!has_component(eid, collider)) return false;
-    transform *t = &transform_list[eid];
+    transform *t = &GET_COMPONENT(transform,eid);
     vector2 sizea = t->collision_size.x && t->collision_size.y ? t->collision_size : t->size;
     vector2 loca = vector2_add(t->location,t->collision_offset);
     aabb2 a = (aabb2){vector2_add(loca, t->collision_offset), vector2_add(loca, sizea)};
-    uint64_t mask = collider_list[eid].mask;
+    uint64_t mask = GET_COMPONENT(collider,eid).mask;
     for (int i = 0; i < MAX_ENTITIES; i++){
-        transform *t2 = &transform_list[i];
+        transform *t2 = &GET_COMPONENT(transform,i);
         vector2 sizeb = t2->collision_size.x && t2->collision_size.y ? t2->collision_size : t2->size;
         vector2 locb = vector2_add(t2->location,t2->collision_offset);
         aabb2 b = (aabb2){vector2_add(locb, t2->collision_offset), vector2_add(locb, sizeb)};
-        if (i != eid && collider_list[i].active && (mask & (1 << collider_list[i].layer)) && aabb2_check_collision(a, b)){
+        if (i != eid && GET_COMPONENT(collider,i).active && (mask & (1 << GET_COMPONENT(collider,i).layer)) && aabb2_check_collision(a, b)){
             *coll = i;
             return true;
         }

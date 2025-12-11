@@ -5,8 +5,8 @@ void render_lookat_debug(entity eid, look_at *l, transform *t, draw_ctx*ctx, flo
 }
 
 void enqueue_activity(entity eid, activity act){
-    if (!activity_queue_list[eid].active) activity_queue_list[eid].active = true;
-    activity_queue *q = &activity_queue_list[eid];
+    if (!GET_COMPONENT(activity_queue,eid).active) GET_COMPONENT(activity_queue,eid).active = true;
+    activity_queue *q = &GET_COMPONENT(activity_queue,eid);
     if (q->activity_ptr >= 15) {
         printf("Activity queue full for entity %i",eid);
         return;
@@ -15,8 +15,8 @@ void enqueue_activity(entity eid, activity act){
 }
 
 activity dequeue_activity(entity eid){
-    if (!activity_queue_list[eid].active) activity_queue_list[eid].active = true;
-    activity_queue *q = &activity_queue_list[eid];
+    if (!GET_COMPONENT(activity_queue,eid).active) GET_COMPONENT(activity_queue,eid).active = true;
+    activity_queue *q = &GET_COMPONENT(activity_queue,eid);
     if (q->activity_ptr <= 0) {
         printf("Activity queue empty for entity %i",eid);
         return (activity){};
@@ -25,8 +25,8 @@ activity dequeue_activity(entity eid){
 }
 
 void clear_activities(entity eid){
-    if (!activity_queue_list[eid].active) activity_queue_list[eid].active = true;
-    activity_queue *q = &activity_queue_list[eid];
+    if (!GET_COMPONENT(activity_queue,eid).active) GET_COMPONENT(activity_queue,eid).active = true;
+    activity_queue *q = &GET_COMPONENT(activity_queue,eid);
     q->activity_ptr = 0;
 }
 

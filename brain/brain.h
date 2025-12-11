@@ -87,7 +87,7 @@ static void trigger_##comp(entity eid, comp##_need *c, float dt){\
     if (c->triggered == trigger_add){\
         if (!get_tag(eid, trigger_tag)){\
             set_tag(eid, trigger_tag, true);\
-            human_brain_t_list[eid].current_activity.state = brain_none;\
+            GET_COMPONENT(human_brain_t,eid).current_activity.state = brain_none;\
             enqueue_activity(eid, (activity){\
                 .state = brain_find_so\
             });\
@@ -104,20 +104,20 @@ make_logic_system_1d(comp##_trigger_system, comp##_need, trigger_##comp)
 #define find_so(tag, search_tag, need)\
 static void seek_##tag(entity eid, tag *d, human_brain_t *ai, float dt){\
     if (ai->current_activity.state != brain_find_so) return;\
-    find_unique(eid, search_tag##_list, {\
+    find_unique(eid, GET_COMP_ARRAY(search_tag), {\
         enqueue_activity(eid, ((activity){\
             .state = brain_use_so,\
             .value = uid\
         }));\
         enqueue_activity(eid, ((activity){\
             .state = brain_move,\
-            .vector_value = {transform_list[uid].location.x, transform_list[uid].location.y + transform_list[uid].size.y}\
+            .vector_value = {GET_COMPONENT(transform,uid).location.x, GET_COMPONENT(transform,uid).location.y + GET_COMPONENT(transform,uid).size.y}\
         }));\
-        need##_need_list[eid].triggered = trigger_remove;\
-        human_brain_t_list[eid].current_activity.state = brain_none;\
+        need##GET_COMPONENT(_need,eid).triggered = trigger_remove;\
+        GET_COMPONENT(human_brain_t,eid).current_activity.state = brain_none;\
     }, {\
-        need##_need_list[eid].triggered = trigger_remove;\
-        human_brain_t_list[eid].current_activity.state = brain_none;\
+        need##GET_COMPONENT(_need,eid).triggered = trigger_remove;\
+        GET_COMPONENT(human_brain_t,eid).current_activity.state = brain_none;\
     });\
 }\
 make_logic_system(seek_##need, tag, human_brain_t, seek_##tag)
@@ -127,7 +127,7 @@ make_logic_system(seek_##need, tag, human_brain_t, seek_##tag)
 static void seek##_simple_action(entity eid, human_brain_t *ai, need##_need *n, float dt){\
     if (ai->current_activity.state != brain_use_so) return;\
     entity so = (entity)ai->current_activity.value;\
-    seek *action = &seek##_list[so];\
+    seek *action = GET_COMPONENT_PTR(seek,so);\
     if (!action->active) return;\
     ai->current_activity.float_value += dt;\
     n->input += dt;\

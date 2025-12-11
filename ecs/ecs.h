@@ -14,10 +14,16 @@ typedef struct \
     values name;\
 extern name name##_list[MAX_ENTITIES];
 
+#define GET_COMP_ARRAY(name) name##_list
+#define GET_COMPONENT(name, index) GET_COMP_ARRAY(name)[index]
+#define GET_COMPONENT_PTR(name, index) &GET_COMPONENT(name, index)
+
 #define COMP_IMPL(name) name name##_list[MAX_ENTITIES];
 
 #define TAG(name) \
 COMPONENT(name, { bool active; })
+
+TAG(generic_tag)
 
 extern entity debug_focused_entity;
 
@@ -26,7 +32,7 @@ extern entity debug_focused_entity;
 #define make_logic_system_1d(name, comp1, function) \
     static void name(float dt){\
         for (int i = 1; i < MAX_ENTITIES; i++){\
-            comp1 *c1 = &comp1##_list[i];\
+            comp1 *c1 = GET_COMPONENT_PTR(comp1,i);\
             if (c1->active){\
                 function(i, c1, dt);\
             }\
@@ -36,8 +42,8 @@ extern entity debug_focused_entity;
 #define make_logic_system(name, comp1, comp2, function) \
     static void name(float dt){\
         for (int i = 1; i < MAX_ENTITIES; i++){\
-            comp1 *c1 = &comp1##_list[i];\
-            comp2 *c2 = &comp2##_list[i];\
+            comp1 *c1 = GET_COMPONENT_PTR(comp1,i);\
+            comp2 *c2 = GET_COMPONENT_PTR(comp2,i);\
             if (c1->active && c2->active){\
                 function(i, c1, c2, dt);\
             }\
@@ -47,8 +53,8 @@ extern entity debug_focused_entity;
 #define make_render_system(name, comp1, comp2, function) \
     static void name(draw_ctx *ctx, float dt){\
         for (int i = 1; i < MAX_ENTITIES; i++){\
-            comp1 *c1 = &comp1##_list[i];\
-            comp2 *c2 = &comp2##_list[i];\
+            comp1 *c1 = GET_COMPONENT_PTR(comp1,i);\
+            comp2 *c2 = GET_COMPONENT_PTR(comp2,i);\
             if (c1->active && c2->active){\
                 function(i, c1, c2, ctx, dt);\
             }\
@@ -58,22 +64,22 @@ extern entity debug_focused_entity;
 #define make_render_system_1d(name, comp1, function) \
     static void name(draw_ctx *ctx, float dt){\
         for (int i = 1; i < MAX_ENTITIES; i++){\
-            comp1 *c1 = &comp1##_list[i];\
+            comp1 *c1 = GET_COMPONENT_PTR(comp1,i);\
             if (c1->active && c2->active){\
                 function(i, c1,  ctx, dt);\
             }\
         }\
     }\
 
-#define has_component(eid, comp) comp##_list[eid].active
+#define has_component(eid, comp) GET_COMPONENT(comp,eid).active
 
-#define set_tag(eid, comp, value) comp##_list[eid].active = value
+#define set_tag(eid, comp, value) GET_COMPONENT(comp,eid).active = value
 
-#define get_tag(eid, comp) comp##_list[eid].active
+#define get_tag(eid, comp) GET_COMPONENT(comp,eid).active
 
-#define get_value(eid, comp, prop) comp##_list[eid].prop
+#define get_value(eid, comp, prop) GET_COMPONENT(comp,eid).prop
 
-#define set_value(eid, comp, prop, value) comp##_list[eid].prop = value
+#define set_value(eid, comp, prop, value) GET_COMPONENT(comp,eid).prop = value
 
 #define find_unique(eid, list, action, fallback) do {\
     bool found = false;\
@@ -81,8 +87,8 @@ extern entity debug_focused_entity;
     entity min_entity = 0;\
     for (int uid = 1; uid < MAX_ENTITIES; uid++){\
         if (list[uid].active){ \
-            if (eid > 0 && transform_list[eid].active && transform_list[uid].active){\
-                float m = vector2_magnitude(vector2_sub(transform_list[uid].location, transform_list[eid].location));\
+            if (eid > 0 && GET_COMPONENT(transform,eid).active && GET_COMPONENT(transform,uid).active){\
+                float m = vector2_magnitude(vector2_sub(GET_COMPONENT(transform,uid).location, GET_COMPONENT(transform,eid).location));\
                 if (m < min_distance){\
                     min_distance = m;\
                     min_entity = uid;\
@@ -108,14 +114,14 @@ extern entity debug_focused_entity;
 } while(0)
 
 #define create_component(eid, type, initializer) do {\
-    type *component = &type##_list[eid];\
+    type *component = GET_COMPONENT_PTR(type,eid);\
     component->active = true;\
     initializer;\
 } while(0)
 
 #define point_collision(point, type, action) do {\
     for (int cid = 1; cid < MAX_ENTITIES; cid++){\
-        if (type##_list[cid].active && transform_list[cid].active && point_inside(point, &transform_list[cid])){\
+        if (GET_COMPONENT(type,cid).active && GET_COMPONENT(transform,cid).active && point_inside(point, &GET_COMPONENT(transform,cid))){\
             action;\
             break;\
         }\
@@ -123,10 +129,10 @@ extern entity debug_focused_entity;
 } while(0);
 
 #define check_collision(source, type, action) do {\
-    if (!transform_list[source].active) break;\
+    if (!GET_COMPONENT(transform,source).active) break;\
     for (int cid = 1; cid < MAX_ENTITIES; cid++){\
         if (cid != source){\
-            if (type##_list[cid].active && transform_list[cid].active && collide(&transform_list[source],&transform_list[cid])){\
+            if (GET_COMPONENT(type,cid).active && GET_COMPONENT(transform,cid).active && collide(&GET_COMPONENT(transform,source),&GET_COMPONENT(transform,cid))){\
                 action;\
                 break;\
             }\
