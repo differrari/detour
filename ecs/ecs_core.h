@@ -5,7 +5,7 @@
 #include "math/math.h"
 #include "math/aabb2.h"
 #include "math/vector.h"
-#include "mouse_input.h"
+#include "input/input_environments.h"
 
 COMPONENT(transform, {
     bool active;
@@ -94,9 +94,6 @@ make_logic_system(resize_sprite_system, sprite, transform, resize_sprites);
 
 void draw_debug_line(vector2 start, vector2 end, color color);
 void draw_debug_bar(entity eid, vector2 start, vector2 size, float fill, color color);
-
-void possessed_kbd_handler(entity uid, kbd_event event, float dt);
-void possessed_mouse_handler(entity uid, mouse_data event, float dt);
 
 void map_zoom(mouse_input mouse, float dt);
 vector2 screentoworld(gpu_point p);

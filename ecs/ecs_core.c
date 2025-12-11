@@ -60,19 +60,6 @@ void map_zoom(mouse_input mouse, float dt){
     } else zoom_changed = false;
 }
 
-void input_system(float dt){
-    find_unique(0,possessed_list, {
-        kbd_event event = {};
-        while (read_event(&event)){
-            if (event.key == KEY_ESC) halt(0);
-            possessed_kbd_handler(uid, event, dt);
-        }
-        mouse_data mouse;
-        get_mouse_status(&mouse);
-        possessed_mouse_handler(uid, mouse, dt);
-    }, {});
-}
-
 void render_solid(entity eid, transform *t, solid *s, draw_ctx *ctx, float dt){
     render_adjust(t->size.x * camera_mult, t->size.y * camera_mult)
     if (w > 0 && h > 0)

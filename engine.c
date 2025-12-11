@@ -1,5 +1,15 @@
 #include "engine.h"
 
+draw_ctx* prepare_graphics(){
+    draw_ctx *ctx = malloc(sizeof(draw_ctx));
+    request_draw_ctx(ctx);
+    return ctx;
+}
+
+void commit_graphics(draw_ctx *ctx){
+    commit_draw_ctx(ctx);
+}
+
 void run_game(uint64_t target_fps){
     draw_ctx *ctx = prepare_graphics();
     get_render_ctx(ctx);
