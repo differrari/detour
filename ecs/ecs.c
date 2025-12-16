@@ -1,6 +1,7 @@
 #include "ecs.h"
 #include "math/math.h"
 #include "minigame/minigame.h"
+#include "timer.h"
 
 draw_ctx *ctx;
 
@@ -21,6 +22,7 @@ void update(float dt){
     pre_render(ctx, dt);
     run_logic_systems;
     run_render_systems;
+    timer_update(dt);
     post_render(ctx, dt);
     minigame_render(ctx, dt);
 }
