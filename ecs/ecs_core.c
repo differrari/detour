@@ -6,8 +6,8 @@
 #include "syscalls/syscalls.h"
 #include "ui/graphic_types.h"
 
-float camera_size;
-vector2 camera_pos;
+float camera_size = 0;
+vector2 camera_pos = {};
 extern float camera_scale;
 extern bool zoom_changed;
 
@@ -179,7 +179,7 @@ bool find_collision(entity eid, entity *coll){
         vector2 sizeb = t2->collision_size.x && t2->collision_size.y ? t2->collision_size : t2->size;
         vector2 locb = vector2_add(t2->location,t2->collision_offset);
         aabb2 b = (aabb2){vector2_add(locb, t2->collision_offset), vector2_add(locb, sizeb)};
-        if (i != eid && GET_COMPONENT(collider,i).active && (mask & (1 << GET_COMPONENT(collider,i).layer)) && aabb2_check_collision(a, b)){
+        if (i != eid && has_component(eid, collider) && (mask & (1 << GET_COMPONENT(collider,i).layer)) && aabb2_check_collision(a, b)){
             *coll = i;
             return true;
         }
@@ -204,7 +204,6 @@ void apply_movement(entity eid, transform *t, movement *m, float dt){
     entity e = 0;
     if (!vector2_zero(dir)){
         if (has_component(eid, collider)){
-            // printf("Checking collision of %i",eid);
             if (!find_movement_collision(eid, dir, &hit, &e)){
                 t->location.x += dir.x;
                 t->location.y += dir.y;

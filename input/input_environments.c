@@ -26,11 +26,11 @@ void input_system(float dt){
     kbd_handler key_handle = keyboard_handlers[environment];
     if (key_handle || universal_kbd_handler){
         kbd_event event = {};
-            while (read_event(&event)){
-                if ((!key_handle || !key_handle(event, dt)) && universal_kbd_handler)
-                    universal_kbd_handler(event,dt);
-            }
+        while (read_event(&event)){
+            if ((!key_handle || !key_handle(event, dt)) && universal_kbd_handler)
+                universal_kbd_handler(event,dt);
         }
+    }
     mouse_handler mouse_handle = mouse_handlers[environment];
     if (mouse_handle || universal_mouse_handler){
         mouse_data mouse;

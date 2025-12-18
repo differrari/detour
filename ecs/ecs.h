@@ -18,7 +18,7 @@ extern name name##_list[MAX_ENTITIES];
 #define GET_COMPONENT(name, index) GET_COMP_ARRAY(name)[index]
 #define GET_COMPONENT_PTR(name, index) &GET_COMPONENT(name, index)
 
-#define COMP_IMPL(name) name name##_list[MAX_ENTITIES];
+#define COMP_IMPL(name) name name##_list[MAX_ENTITIES] = {};
 
 #define TAG(name) \
 COMPONENT(name, { bool active; })

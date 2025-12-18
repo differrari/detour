@@ -3,7 +3,7 @@
 #define TIMERS_MAX 16
 
 timer_t timers[16] = {};
-uint8_t timer_count;
+uint8_t timer_count = 0;
 
 bool start_timer(float time, void (*function)()){
     for (int i = 0; i < TIMERS_MAX; i++){
