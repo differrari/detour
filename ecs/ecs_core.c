@@ -132,10 +132,10 @@ bool find_movement_collision(entity eid, vector2 direction, float *f, entity *co
 bool zoom_changed;
 
 void recalculate_collision(entity eid, sprite *s, transform *t){
-    uint32_t min_x = s->scaled_info.width; 
-    uint32_t min_y = s->scaled_info.height;
-    uint32_t max_x = 0; 
-    uint32_t max_y = 0;
+    int32_t min_x = s->scaled_info.width; 
+    int32_t min_y = s->scaled_info.height;
+    int32_t max_x = 0; 
+    int32_t max_y = 0;
     uint32_t *img = s->scaled_img;
     for (uint32_t y = 0; y < s->scaled_info.height; y++){
         uint32_t *row = img + (y * s->scaled_info.width);
@@ -154,7 +154,7 @@ void recalculate_collision(entity eid, sprite *s, transform *t){
 }
 
 void resize_sprites(entity eid, sprite *s, transform *t, float dt){
-    if (!zoom_changed && s->scaled_img) return;
+    if ((!zoom_changed && s->scaled_img) || !s->visible) return;
     if (s->scaled_img) free_sized(s->scaled_img, s->scaled_img_size);
     s->scaled_img_size = t->size.x * camera_mult * t->size.y * camera_mult * sizeof(uint32_t);
     s->scaled_info.width = t->size.x * camera_mult;
