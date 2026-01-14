@@ -2,7 +2,7 @@
 #include "input/input_environments.h"
 #include "engine.h"
 
-typedef void (*minigame_finish_callback)(bool);
+typedef void (*minigame_finish_callback)(bool,void*);
 
 typedef struct {
     const char *name;
