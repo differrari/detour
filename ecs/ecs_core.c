@@ -132,14 +132,14 @@ bool find_movement_collision(entity eid, vector2 direction, float *f, entity *co
 bool zoom_changed;
 
 void recalculate_collision(entity eid, sprite *s, transform *t){
-    int32_t min_x = s->scaled_info.width; 
-    int32_t min_y = s->scaled_info.height;
+    int32_t min_x = s->info.width; 
+    int32_t min_y = s->info.height;
     int32_t max_x = 0; 
     int32_t max_y = 0;
-    uint32_t *img = s->scaled_img;
-    for (uint32_t y = 0; y < s->scaled_info.height; y++){
-        uint32_t *row = img + (y * s->scaled_info.width);
-        for (uint32_t x = 0; x < s->scaled_info.width; x++){
+    uint32_t *img = s->base_img;
+    for (uint32_t y = 0; y < s->info.height; y++){
+        uint32_t *row = img + (y * s->info.width);
+        for (uint32_t x = 0; x < s->info.width; x++){
             if (row[x] >> 24){
                 if (x < min_x) min_x = x;
                 if (x > max_x) max_x = x;
@@ -149,7 +149,8 @@ void recalculate_collision(entity eid, sprite *s, transform *t){
         }
     }
     t->collision_offset = (vector2){min_x/camera_mult, min_y/camera_mult};
-    t->collision_size = (vector2){(max_x - min_x)/camera_mult, (max_y - min_y)/camera_mult};
+    t->collision_size = (vector2){max(0,(max_x - min_x)/camera_mult), max(0,(max_y - min_y)/camera_mult)};
+    FOCUS_PRINT("mx %i Mx %i my %i My %i",min_x,max_x,min_y,max_y);
     FOCUS_PRINT("%fx%f %fx%f",t->collision_offset.x,t->collision_offset.y,t->collision_size.x,t->collision_size.y);
 }
 
@@ -159,7 +160,7 @@ void resize_sprites(entity eid, sprite *s, transform *t, float dt){
     s->scaled_img_size = t->size.x * camera_mult * t->size.y * camera_mult * sizeof(uint32_t);
     s->scaled_info.width = t->size.x * camera_mult;
     s->scaled_info.height = t->size.y * camera_mult;
-    s->scaled_img = malloc(s->scaled_img_size);
+    s->scaled_img = zalloc(s->scaled_img_size);
     if (!s->base_img || !s->scaled_img) return;
     rescale_image(s->info.width, s->info.height, t->size.x * camera_mult, t->size.y * camera_mult, s->base_img, s->scaled_img);
     if (t->collision_size.x == 0 || t->collision_size.y == 0){
