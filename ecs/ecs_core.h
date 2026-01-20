@@ -45,6 +45,7 @@ COMPONENT(sprite, {
     image_info scaled_info;
     size_t scaled_img_size;
     bool visible;
+    bool dirty;
     image_transform transform;
 });
 

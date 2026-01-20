@@ -155,13 +155,14 @@ void recalculate_collision(entity eid, sprite *s, transform *t){
 }
 
 void resize_sprites(entity eid, sprite *s, transform *t, float dt){
-    if ((!zoom_changed && s->scaled_img) || !s->visible) return;
+    if ((!zoom_changed && s->scaled_img && !s->dirty) || !s->visible) return;
     if (s->scaled_img) free_sized(s->scaled_img, s->scaled_img_size);
     s->scaled_img_size = t->size.x * camera_mult * t->size.y * camera_mult * sizeof(uint32_t);
     s->scaled_info.width = t->size.x * camera_mult;
     s->scaled_info.height = t->size.y * camera_mult;
     s->scaled_img = zalloc(s->scaled_img_size);
     if (!s->base_img || !s->scaled_img) return;
+    s->dirty = true;
     rescale_image(s->info.width, s->info.height, t->size.x * camera_mult, t->size.y * camera_mult, s->base_img, s->scaled_img);
     if (t->collision_size.x == 0 || t->collision_size.y == 0){
         recalculate_collision(eid, s, t);
