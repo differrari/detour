@@ -4,11 +4,9 @@ CXX        := $(ARCH)g++
 LD         := $(ARCH)ld
 AR         := $(ARCH)ar
 
-OS_PATH ?= ../os
-
 EXEC_NAME ?= detour.a
 
-STDINC ?= $(OS_PATH)/shared/
+STDINC ?= ../redlib
 CFLAGS ?= -std=c99 -I$(STDINC) -I. -O0
 C_SOURCE ?= $(shell find . -name '*.c')
 OBJ ?= $(C_SOURCE:%.c=%.o)
