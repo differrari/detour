@@ -56,6 +56,7 @@ COMPONENT(collider, {
 })
 
 typedef enum colliderype {
+    ct_none,
     ct_static,
     ct_dynamic,
     ct_npc,
