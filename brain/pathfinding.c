@@ -1,6 +1,6 @@
 #include "pathfinding.h"
 #include "syscalls/syscalls.h"
-#include "data_struct/p_queue.h"
+#include "data/struct/p_queue.h"
 #include "std/memory.h"
 
 vector2 *nodes;
