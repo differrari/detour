@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine.h"
+#include "string/slice.h"
 
 typedef uint64_t entity; 
 typedef void (*logic_sys_function)(float dt);
@@ -113,7 +114,23 @@ extern entity debug_focused_entity;
     }\
 } while(0)
 
+typedef struct {
+    string_slice name;
+    size_t size;
+    uintptr_t data;
+    uint64_t id;
+} component_data;
+
+void register_component(void* comp_list, size_t comp_size, char* comp_name);
+typedef void (*comp_iter)(component_data data);
+void all_components(comp_iter);
+bool entity_has_component(entity ent, component_data data);
+uint64_t get_comp_id(string_slice comp_name);
+
+#define COMP_TO_ID(type) get_comp_id(#type,strlen(#type));
+
 #define create_component(eid, type, initializer) do {\
+    register_component(GET_COMP_ARRAY(type), sizeof(type), #type);\
     type *component = GET_COMPONENT_PTR(type,eid);\
     component->active = true;\
     initializer;\
