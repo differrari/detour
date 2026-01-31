@@ -2,7 +2,6 @@
 #include "math/aabb2.h"
 #include "math/vector.h"
 #include "mouse_input.h"
-#include "input_keycodes.h"
 #include "syscalls/syscalls.h"
 #include "ui/graphic_types.h"
 
@@ -13,14 +12,14 @@ extern bool zoom_changed;
 
 extern vector2 room_size;
 
-COMP_IMPL(transform)
-COMP_IMPL(movement)
-COMP_IMPL(solid)
-COMP_IMPL(sprite)
-COMP_IMPL(collider)
-COMP_IMPL(player)
-COMP_IMPL(possessed)
-COMP_IMPL(camera_follow)
+COMP_IMPL(transform,1)
+COMP_IMPL(movement,1)
+COMP_IMPL(solid,1)
+COMP_IMPL(sprite,1)
+COMP_IMPL(collider,1)
+COMP_IMPL(player,1)
+COMP_IMPL(possessed,1)
+COMP_IMPL(camera_follow,1)
 
 #define camera_mult (camera_size * camera_scale)
 

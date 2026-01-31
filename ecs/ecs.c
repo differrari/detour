@@ -52,7 +52,7 @@ uint64_t get_comp_id(string_slice comp_name){
     return hash ? *(int64_t*)hash : 0;
 }
 
-void register_component(void* comp_list, size_t comp_size, char* comp_name){
+void register_component(void* comp_list, size_t comp_size, char* comp_name, uint64_t comp_category){
     size_t len = strlen(comp_name);
     if (!get_comp_id((string_slice){ .data = comp_name, .length = len})){
         int64_t *nid = zalloc(sizeof(int64_t));
@@ -61,6 +61,7 @@ void register_component(void* comp_list, size_t comp_size, char* comp_name){
             .data = (uintptr_t)comp_list,
             .name = make_string_slice(comp_name, 0, len),
             .size = comp_size,
+            .category = comp_category,
             .id = *nid
         };
         chunk_array_push(component_directory, &comp_data);
@@ -69,10 +70,18 @@ void register_component(void* comp_list, size_t comp_size, char* comp_name){
     }
 }
 
-void all_components(comp_iter iterator){
+void all_components(comp_iter iterator, uint64_t category){
     size_t count = cid-1;
-    for (size_t i = 0; i < count; i++)
-        iterator(*(component_data*)chunk_array_get(component_directory, i));
+    for (size_t i = 0; i < count; i++){
+        component_data *data = (component_data*)chunk_array_get(component_directory, i);
+        if (category == 0 || data->category == category)
+            iterator(*data);
+    }
+}
+
+void* get_comp(entity ent, component_data data){
+    if (!*(bool*)(data.data + (ent * data.size))) return 0;
+    return (void*)(data.data + (ent * data.size));
 }
 
 bool entity_has_component(entity ent, component_data data){

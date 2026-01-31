@@ -13,13 +13,15 @@ typedef void (*render_sys_function)(draw_ctx *ctx, float dt);
 #define COMPONENT(name, values) \
 typedef struct \
     values name;\
-extern name name##_list[MAX_ENTITIES];
+extern name name##_list[MAX_ENTITIES];\
+extern uint64_t name##_category;
 
 #define GET_COMP_ARRAY(name) name##_list
 #define GET_COMPONENT(name, index) GET_COMP_ARRAY(name)[index]
 #define GET_COMPONENT_PTR(name, index) &GET_COMPONENT(name, index)
 
-#define COMP_IMPL(name) name name##_list[MAX_ENTITIES] = {};
+#define COMP_IMPL(name,cat) name name##_list[MAX_ENTITIES] = {};\
+uint64_t name##_category = cat;
 
 #define TAG(name) \
 COMPONENT(name, { bool active; })
@@ -119,18 +121,20 @@ typedef struct {
     size_t size;
     uintptr_t data;
     uint64_t id;
+    uint64_t category;
 } component_data;
 
-void register_component(void* comp_list, size_t comp_size, char* comp_name);
+void register_component(void* comp_list, size_t comp_size, char* comp_name, uint64_t comp_category);
 typedef void (*comp_iter)(component_data data);
-void all_components(comp_iter);
+void all_components(comp_iter iterator, uint64_t category);
 bool entity_has_component(entity ent, component_data data);
 uint64_t get_comp_id(string_slice comp_name);
+void* get_comp(entity ent, component_data data);
 
 #define COMP_TO_ID(type) get_comp_id(#type,strlen(#type));
 
 #define create_component(eid, type, initializer) do {\
-    register_component(GET_COMP_ARRAY(type), sizeof(type), #type);\
+    register_component(GET_COMP_ARRAY(type), sizeof(type), #type, type##_category);\
     type *component = GET_COMPONENT_PTR(type,eid);\
     component->active = true;\
     initializer;\
